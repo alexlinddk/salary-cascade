@@ -1,26 +1,73 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-tier1: var(--tier-1);
+  --color-tier2: var(--tier-2);
+  --color-savings: var(--savings-color);
+  --color-invest: var(--invest-color);
+  --color-free: var(--free-color);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+  --background: #09090b;
+  --foreground: #fafafa;
+  --muted: #18181b;
+  --muted-foreground: #a1a1aa;
+  --border: #27272a;
+  --card: #111113;
+  --card-foreground: #fafafa;
+  --accent: #27272a;
+  --accent-foreground: #fafafa;
+  --success: #4ade80;
+  --warning: #fbbf24;
+  --danger: #f87171;
+
+  --tier-1: #f87171;
+  --tier-2: #fbbf24;
+  --savings-color: #4ade80;
+  --invest-color: #60a5fa;
+  --free-color: #a78bfa;
+}
+
+* {
+  border-color: var(--border);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+main {
+  animation: fadeIn 0.3s ease-out;
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
 }

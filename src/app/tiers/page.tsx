@@ -1,53 +1,103 @@
 import { deleteExpense } from "@/lib/actions";
 import { formatDKK } from "@/lib/cascade";
 import { getTiersWithExpenses } from "@/lib/data";
-import AddExpenseForm from "./add-expense-form";
+import AddExpenseForm from "../../components/add-expense-form";
+
+const TIER_DOT_COLORS: Record<number, string> = {
+  1: "bg-tier1",
+  2: "bg-tier2",
+};
 
 export default async function TiersPage() {
-    const tiers = await getTiersWithExpenses();
+  const tiers = await getTiersWithExpenses();
 
-    return (
-        <div className="max-w-xl mx-auto pt-16">
-            <h1 className="text-4xl font-bold mb-8">Tiers</h1>
-            <p className="text-gray-600">Her kan du se og redigere dine tiers og tilhørende udgifter.</p>
+  return (
+    <div>
+      <h1 className="text-3xl font-semibold tracking-tight mb-1">Udgifter</h1>
+      <p className="text-muted-foreground text-sm mb-8">
+        Administrer dine tiers og tilhørende udgifter.
+      </p>
 
-            {tiers.map((tier) => (
-                <div key={tier.id} className="border rounded p-4 mb-6">
-                    <div className="flex items-center mb-2">
-                        <span className="text-2xl mr-2">{tier.emoji ?? "📋"}</span>
-                        <h2 className="text-xl font-semibold">{tier.name}</h2>
-                    </div>
-                    <p className="text-gray-500 mb-4">Prioritet: {tier.priority}</p>
-                    {tier.expenses.length > 0 ? (
-                        <ul className="list-disc list-inside">
-                            {tier.expenses.map((expense) => (
-                                <li key={expense.id} className="flex justify-between">
-                                    <span>{expense.name}</span>
-                                    <div className="flex">{formatDKK(parseFloat(expense.amount))}
-                                        <form action={async () => {
-                                            "use server";
-                                            await deleteExpense(expense.id);
-                                        }}>
-                                            <button type="submit" className="text-red-500 text-sm ml-2">Slet</button>
-                                        </form>
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
-
-                    ) : (
-                        <p className="text-gray-500">Ingen udgifter tilføjet endnu.</p>
-                    )}
-                    <div className="flex justify-between font-semibold mt-4 pt-2 border-t border-gray-700">
-                        <span>Total</span>
-                        <span>
-                            {formatDKK(tier.expenses.reduce((sum, exp) => sum + parseFloat(exp.amount), 0))}
-                        </span>
-                    </div>
-                    <AddExpenseForm tierId={tier.id} />
+      <div className="space-y-6">
+        {tiers.map((tier) => {
+          const tierTotal = tier.expenses.reduce(
+            (sum, exp) => sum + parseFloat(exp.amount),
+            0
+          );
+          return (
+            <div
+              key={tier.id}
+              className="rounded-xl border border-border bg-card p-5"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <span
+                    className={`w-2.5 h-2.5 rounded-full ${
+                      TIER_DOT_COLORS[tier.priority] || "bg-muted-foreground"
+                    }`}
+                  />
+                  <span className="text-lg">{tier.emoji ?? "📋"}</span>
+                  <h2 className="text-lg font-medium">{tier.name}</h2>
                 </div>
-            ))}
-        </div>
+                <span className="text-xs text-muted-foreground uppercase tracking-wider">
+                  P{tier.priority}
+                </span>
+              </div>
 
-    );
+              {tier.expenses.length > 0 ? (
+                <div>
+                  {tier.expenses.map((expense) => (
+                    <div
+                      key={expense.id}
+                      className="flex items-center justify-between py-2 border-b border-border last:border-b-0"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm">{expense.name}</span>
+                        {expense.isAutoPaid && (
+                          <span className="text-[10px] text-muted-foreground bg-accent px-1.5 py-0.5 rounded">
+                            AUTO
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className="tabular-nums text-sm">
+                          {formatDKK(parseFloat(expense.amount))}
+                        </span>
+                        <form
+                          action={async () => {
+                            "use server";
+                            await deleteExpense(expense.id);
+                          }}
+                        >
+                          <button
+                            type="submit"
+                            className="text-muted-foreground hover:text-danger text-xs transition-colors"
+                          >
+                            ✕
+                          </button>
+                        </form>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-muted-foreground text-sm py-2">
+                  Ingen udgifter endnu.
+                </p>
+              )}
+
+              <div className="flex justify-between mt-3 pt-3 border-t border-border">
+                <span className="text-sm font-medium">Total</span>
+                <span className="tabular-nums text-sm font-semibold">
+                  {formatDKK(tierTotal)}
+                </span>
+              </div>
+
+              <AddExpenseForm tierId={tier.id} />
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
 }
