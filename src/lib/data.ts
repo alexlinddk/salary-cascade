@@ -25,3 +25,9 @@ export async function getTiersWithExpenses() {
     orderBy: [asc(tiers.priority)],
   });
 }
+
+export async function getSavingsGoals() {
+  return db.query.savingsGoals.findMany({
+    orderBy: [asc(savingsGoals.priority)],
+  });
+}

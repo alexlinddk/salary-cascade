@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/db";
-import { expenses } from "@/db/schema";
+import { expenses, savingsGoals } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
@@ -31,4 +31,23 @@ export async function updateExpense(id: string, name: string, amount: string) {
 export async function deleteExpense(id: string) {
   await db.delete(expenses).where(eq(expenses.id, id));
   revalidatePath("/tiers");
+}
+
+export async function addSavingsGoal(
+    name: string, 
+    targetAmount: string, 
+    monthlyContribution: string, 
+    priority: number) {
+    await db.insert(savingsGoals).values({
+      name,
+      targetAmount: targetAmount,
+      monthlyContribution: monthlyContribution,
+      priority,
+    });
+  revalidatePath("/savings");
+}
+
+export async function deleteSavingsGoal(id: string) { 
+    await db.delete(savingsGoals).where(eq(savingsGoals.id, id));
+    revalidatePath("/savings");
 }
