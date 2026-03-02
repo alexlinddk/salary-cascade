@@ -1,9 +1,12 @@
 "use server";
 
 import { db } from "@/db";
-import { expenses, investmentAllocations, savingsGoals } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { expenses, investmentAllocations, monthlySnapshots, savingsGoals, snapshotTierAllocations, tiers, transferItems } from "@/db/schema";
+import { asc, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { cascade } from "./cascade";
+import { getCascadeData } from "./data";
+import { redirect } from "next/navigation";
 
 export async function addExpense(tierId: string, name: string, amount: string) {
     await db.insert(expenses).values({
@@ -64,4 +67,119 @@ export async function addInvestmentAllocation(name: string, allocationType: "fix
 export async function deleteInvestmentAllocation(id: string) {
     await db.delete(investmentAllocations).where(eq(investmentAllocations.id, id));
     revalidatePath("/investments");
+}
+
+export async function confirmIncome(month: string, actualIncome: string) {
+    const existing = await db.query.monthlySnapshots.findFirst({
+        where: eq(monthlySnapshots.month, month),
+    });
+
+    if (existing) {
+        redirect("/transfers");
+    }
+
+    const data = await getCascadeData();
+
+    const totalIncome = parseFloat(actualIncome);
+
+    const cascadeTiers = data.tiers.map((tier) => ({
+        id: tier.id,
+        name: tier.name,
+        priority: tier.priority,
+        emoji: tier.emoji ?? "📋",
+        items: tier.expenses.map((exp) => ({
+            id: exp.id,
+            name: exp.name,
+            amount: parseFloat(exp.amount),
+        })),
+    }));
+
+    const cascadeSavings = data.savings.map((goal) => ({
+        id: goal.id,
+        name: goal.name,
+        monthlyContribution: parseFloat(goal.monthlyContribution),
+        priority: goal.priority,
+        targetAmount: parseFloat(goal.targetAmount),
+        currentAmount: parseFloat(goal.currentAmount),
+    }));
+
+    const cascadeInvestments = data.investments.map((inv) => ({
+        id: inv.id,
+        name: inv.name,
+        allocationType: inv.allocationType,
+        amount: parseFloat(inv.amount),
+    }));
+    const result = cascade(totalIncome, cascadeTiers, cascadeSavings, cascadeInvestments);
+    const [snapshot] = await db.insert(monthlySnapshots).values({
+        month,
+        totalIncome: actualIncome,
+        savingsAllocated: String(result.savingsAllocated),
+        investmentsAllocated: String(result.investmentsAllocated),
+        freeMoney: String(result.freeMoney),
+        isConfirmed: true,
+        confirmedAt: new Date(),
+    }).returning();
+
+    for (const tier of result.tierAllocations) {
+        await db.insert(snapshotTierAllocations).values({
+            snapshotId: snapshot.id,
+            tierId: tier.tierId,
+            tierName: tier.tierName,
+            requested: String(tier.requested),
+            allocated: String(tier.allocated),
+            fullyFunded: tier.fullyFunded,
+            shortfall: String(tier.shortfall),
+        });
+    }
+
+    for (const tier of result.tierAllocations) {
+        for (const item of tier.items) {
+            if (item.amount > 0) {
+                const originalExpense = data.tiers
+                    .flatMap(t => t.expenses)
+                    .find(e => e.id === item.itemId);
+
+                await db.insert(transferItems).values({
+                    snapshotId: snapshot.id,
+                    name: item.itemName,
+                    amount: String(item.amount),
+                    type: originalExpense?.isAutoPaid ? "auto" : "manual",
+                });
+            }
+        }
+    }
+
+    for (const goal of result.savingsDetails) {
+        if (goal.allocated > 0) {
+            await db.insert(transferItems).values({
+                snapshotId: snapshot.id,
+                name: `Opsparing: ${goal.goalName}`,
+                amount: String(goal.allocated),
+                type: "manual",
+            });
+        }
+    }
+
+    for (const inv of result.investmentDetails) {
+        if (inv.allocated > 0) {
+            await db.insert(transferItems).values({
+                snapshotId: snapshot.id,
+                name: `Investering: ${inv.investmentName}`,
+                amount: String(inv.allocated),
+                type: "manual",
+            });
+        }
+    }
+
+
+    revalidatePath("/overview");
+    redirect("/transfers");
+}
+
+export async function toggleTransferItem(id: string, completed: boolean) {
+    await db.update(transferItems).set({
+        isCompleted: completed,
+        completedAt: completed ? new Date() : null,
+    }).where(eq(transferItems.id, id));
+    revalidatePath("/transfers");
 }

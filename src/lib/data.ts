@@ -1,6 +1,6 @@
 import { db } from "@/db";
-import { incomeSources, tiers, expenses, savingsGoals, investmentAllocations } from "@/db/schema";
-import { asc } from "drizzle-orm";
+import { incomeSources, tiers, expenses, savingsGoals, investmentAllocations, monthlySnapshots } from "@/db/schema";
+import { asc, eq } from "drizzle-orm";
 
 export async function getCascadeData() {
   const income = await db.query.incomeSources.findMany();
@@ -34,4 +34,12 @@ export async function getSavingsGoals() {
 
 export async function getInvestmentAllocations() {
   return db.query.investmentAllocations.findMany();
+}
+
+export async function getTransferItems(month: string) {
+  const snapshot = await db.query.monthlySnapshots.findFirst({
+    where: eq(monthlySnapshots.month, month),
+    with: { transferItems: true },
+  });
+  return snapshot;
 }
