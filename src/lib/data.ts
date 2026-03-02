@@ -31,3 +31,7 @@ export async function getSavingsGoals() {
     orderBy: [asc(savingsGoals.priority)],
   });
 }
+
+export async function getInvestmentAllocations() {
+  return db.query.investmentAllocations.findMany();
+}
