@@ -18,3 +18,10 @@ export async function getCascadeData() {
 
   return { income, tiers: allTiers, savings, investments };
 }
+
+export async function getTiersWithExpenses() {
+  return db.query.tiers.findMany({
+    with: { expenses: true },
+    orderBy: [asc(tiers.priority)],
+  });
+}
