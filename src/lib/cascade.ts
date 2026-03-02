@@ -2,6 +2,7 @@ export type CascadeTier = {
     id: string;
     name: string;
     priority: number;
+    emoji: string;
     items: { id: string; name: string; amount: number }[];
 };
 
@@ -28,6 +29,8 @@ export type TierAllocation = {
     allocated: number;
     fullyFunded: boolean;
     shortfall: number;
+    tierEmoji: string;
+    items: { itemId: string; itemName: string; amount: number }[];
 };
 
 export type CascadeResult = {
@@ -40,7 +43,7 @@ export type CascadeResult = {
 };
 
 export function formatDKK(amount: number): string {
-  return `${amount.toLocaleString("da-DK", { minimumFractionDigits: 2 })} kr.`;
+    return `${amount.toLocaleString("da-DK", { minimumFractionDigits: 2 })} kr.`;
 }
 
 export function cascade(
@@ -72,7 +75,13 @@ export function cascade(
             requested: tierAmount,
             allocated,
             fullyFunded: allocated === tierAmount,
-            shortfall: tierAmount - allocated
+            shortfall: tierAmount - allocated,
+            tierEmoji: sortedTiers[i].emoji,
+            items: sortedTiers[i].items.map((item) => ({
+                itemId: item.id,
+                itemName: item.name,
+                amount: Math.min(item.amount, remaining),
+            })),
         });
         remaining -= allocated;
     }

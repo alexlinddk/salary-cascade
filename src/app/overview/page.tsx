@@ -1,5 +1,6 @@
 import { getCascadeData } from "@/lib/data";
 import { cascade, formatDKK } from "@/lib/cascade";
+import { CascadeBreakdown } from "./cascade-breakdown";
 
 export default async function OverviewPage() {
     const data = await getCascadeData();
@@ -13,6 +14,7 @@ export default async function OverviewPage() {
         id: tier.id,
         name: tier.name,
         priority: tier.priority,
+        emoji: tier.emoji ?? "📋",
         items: tier.expenses.map((exp) => ({
             id: exp.id,
             name: exp.name,
@@ -56,28 +58,9 @@ export default async function OverviewPage() {
                 <p className="text-sm text-gray-500 mt-2">
                     denne måned
                 </p>
+                <hr className="my-8" />
 
-                {result.totalIncome > 0 && <p>Indkomst: {formatDKK(result.totalIncome)}</p>}
-                {result.tierAllocations.map((tier) => (
-                    <div key={tier.tierId}>
-                        <p>{tier.tierName}: {formatDKK(tier.allocated)}</p>
-                    </div>
-
-                ))}
-                {result.savingsAllocated > 0 && <p>Opsparing: {formatDKK(result.savingsAllocated)}</p>}
-                {result.investmentsAllocated > 0 && <p>Investering: {formatDKK(result.investmentsAllocated)}</p>}
-                {result.freeMoney > 0 && <p>Frit forbrug: {formatDKK(result.freeMoney)} </p>}
-                {result.warnings.length > 0 && (
-                    <div className="mt-4 p-4 bg-yellow-100 text-yellow-800 rounded">
-                        <p className="font-semibold">Advarsler:</p>
-                        <ul className="list-disc list-inside">
-                            {result.warnings.map((warning, idx) => (
-                                <li key={idx}>{warning}</li>
-                            ))}
-                        </ul>
-                    </div>
-                )}
-
+                <CascadeBreakdown result={result} />
             </div>
         </div>
     );
