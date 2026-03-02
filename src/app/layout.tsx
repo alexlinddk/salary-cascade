@@ -33,13 +33,19 @@ export default function RootLayout({
               Oversigt
             </a>
             <a href="/tiers" className="hover:underline">
-              Trin
+              Udgifter
             </a>
             <a href="/savings" className="hover:underline">
               Opsparing
             </a>
             <a href="/investments" className="hover:underline">
               Investering
+            </a>
+            <a href="/transfers" className="hover:underline">
+              Overførsler
+            </a>
+            <a href="/spending" className="hover:underline">
+              Forbrug
             </a>
           </div>
         </nav>    

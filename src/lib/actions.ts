@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/db";
-import { expenses, investmentAllocations, monthlySnapshots, savingsGoals, snapshotTierAllocations, tiers, transferItems } from "@/db/schema";
+import { expenses, investmentAllocations, monthlySnapshots, savingsGoals, snapshotTierAllocations, spendingEntries, tiers, transferItems } from "@/db/schema";
 import { asc, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { cascade } from "./cascade";
@@ -182,4 +182,32 @@ export async function toggleTransferItem(id: string, completed: boolean) {
         completedAt: completed ? new Date() : null,
     }).where(eq(transferItems.id, id));
     revalidatePath("/transfers");
+}
+
+export async function addSpendingEntry(
+  snapshotId: string,
+  description: string,
+  amount: string,
+  category: string
+) {
+  await db.insert(spendingEntries).values({
+    snapshotId,
+    description,
+    amount,
+    date: new Date(),
+    category,
+  });
+
+  const entries = await db.select().from(spendingEntries)
+    .where(eq(spendingEntries.snapshotId, snapshotId));
+  
+  const totalSpent = entries.reduce(
+    (sum, e) => sum + parseFloat(e.amount), 0
+  );
+
+  await db.update(monthlySnapshots).set({
+    freeMoneySpent: String(totalSpent),
+  }).where(eq(monthlySnapshots.id, snapshotId));
+
+  revalidatePath("/spending");
 }
