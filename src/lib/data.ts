@@ -3,6 +3,10 @@ import { incomeSources, tiers, expenses, savingsGoals, investmentAllocations, mo
 import { asc, eq } from "drizzle-orm";
 import { getCurrentMonth } from "./cascade";
 
+export async function getIncomeSources() {
+  return db.query.incomeSources.findMany();
+}
+
 export async function getCascadeData() {
   const income = await db.query.incomeSources.findMany();
 

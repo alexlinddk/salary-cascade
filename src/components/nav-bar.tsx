@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 
 const links = [
     { href: "/overview", label: "Oversigt" },
+    { href: "/income", label: "Indkomst" },
     { href: "/tiers", label: "Udgifter" },
     { href: "/savings", label: "Opsparing" },
     { href: "/investments", label: "Investering" },
@@ -29,8 +30,8 @@ export function NavBar() {
                                 key={link.href}
                                 href={link.href}
                                 className={`px-3 py-1.5 rounded-full text-sm whitespace-nowrap transition-colors ${isActive
-                                        ? "bg-foreground text-background font-medium"
-                                        : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                                    ? "bg-foreground text-background font-medium"
+                                    : "text-muted-foreground hover:text-foreground hover:bg-accent"
                                     }`}
                             >
                                 {link.label}

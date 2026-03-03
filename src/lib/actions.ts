@@ -1,12 +1,41 @@
 "use server";
 
 import { db } from "@/db";
-import { expenses, investmentAllocations, monthlySnapshots, savingsGoals, snapshotTierAllocations, spendingEntries, tiers, transferItems } from "@/db/schema";
+import { expenses, incomeSources, investmentAllocations, monthlySnapshots, savingsGoals, snapshotTierAllocations, spendingEntries, tiers, transferItems } from "@/db/schema";
 import { asc, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { cascade } from "./cascade";
 import { getCascadeData } from "./data";
 import { redirect } from "next/navigation";
+
+
+export async function addIncomeSource(name: string, expectedAmount: string, payDay: number) {
+  await db.insert(incomeSources).values({
+    name,
+    expectedAmount,
+    payDay,
+    isRecurring: true,
+  });
+  revalidatePath("/income");
+  revalidatePath("/overview");
+}
+
+export async function updateIncomeSource(id: string, name: string, expectedAmount: string, payDay: number) {
+  await db.update(incomeSources).set({
+    name,
+    expectedAmount,
+    payDay,
+    updatedAt: new Date(),
+  }).where(eq(incomeSources.id, id));
+  revalidatePath("/income");
+  revalidatePath("/overview");
+}
+
+export async function deleteIncomeSource(id: string) {
+  await db.delete(incomeSources).where(eq(incomeSources.id, id));
+  revalidatePath("/income");
+  revalidatePath("/overview");
+}
 
 export async function addExpense(tierId: string, name: string, amount: string) {
     await db.insert(expenses).values({
