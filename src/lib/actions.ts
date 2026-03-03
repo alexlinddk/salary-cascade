@@ -261,3 +261,8 @@ export async function addSpendingEntry(
 
     revalidatePath("/spending");
 }
+
+export async function deleteTransferItem(id: string) {
+  await db.delete(transferItems).where(eq(transferItems.id, id));
+  revalidatePath("/transfers");
+}

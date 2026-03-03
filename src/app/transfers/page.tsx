@@ -1,18 +1,18 @@
 import { TransferItem } from "@/db/schema";
-import { toggleTransferItem } from "@/lib/actions";
+import { toggleTransferItem, deleteTransferItem } from "@/lib/actions";
 import { getTransferItems } from "@/lib/data";
 import { getCurrentMonth, formatDKK } from "@/lib/cascade";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+
 import Link from "next/link";
 
 function TransferCard({ transfer }: { transfer: TransferItem }) {
   return (
     <div
-      className={`flex items-center justify-between py-3 border-b last:border-b-0 ${
-        transfer.isCompleted ? "opacity-50" : ""
-      }`}
+      className={`flex items-center justify-between py-3 border-b last:border-b-0 ${transfer.isCompleted ? "opacity-50" : ""
+        }`}
     >
       <div className="flex items-center gap-3">
         <form
@@ -23,26 +23,41 @@ function TransferCard({ transfer }: { transfer: TransferItem }) {
         >
           <button
             type="submit"
-            className={`w-5 h-5 rounded border flex items-center justify-center text-xs transition-colors ${
-              transfer.isCompleted
+            className={`w-5 h-5 rounded border flex items-center justify-center text-xs transition-colors ${transfer.isCompleted
                 ? "bg-green-500 border-green-500 text-background"
                 : "border-muted-foreground hover:border-foreground"
-            }`}
+              }`}
           >
             {transfer.isCompleted && "✓"}
           </button>
         </form>
         <span
-          className={`text-sm ${
-            transfer.isCompleted ? "line-through text-muted-foreground" : ""
-          }`}
+          className={`text-sm ${transfer.isCompleted ? "line-through text-muted-foreground" : ""
+            }`}
         >
           {transfer.name}
         </span>
       </div>
-      <span className="tabular-nums text-sm">
-        {formatDKK(parseFloat(transfer.amount))}
-      </span>
+      <div className="flex items-center gap-2">
+        <span className="tabular-nums text-sm">
+          {formatDKK(parseFloat(transfer.amount))}
+        </span>
+        <form
+          action={async () => {
+            "use server";
+            await deleteTransferItem(transfer.id);
+          }}
+        >
+          <Button
+            type="submit"
+            variant="ghost"
+            size="icon-xs"
+            className="text-muted-foreground hover:text-destructive"
+          >
+            ✕
+          </Button>
+        </form>
+      </div>
     </div>
   );
 }
