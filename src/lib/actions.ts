@@ -10,31 +10,31 @@ import { redirect } from "next/navigation";
 
 
 export async function addIncomeSource(name: string, expectedAmount: string, payDay: number) {
-  await db.insert(incomeSources).values({
-    name,
-    expectedAmount,
-    payDay,
-    isRecurring: true,
-  });
-  revalidatePath("/income");
-  revalidatePath("/overview");
+    await db.insert(incomeSources).values({
+        name,
+        expectedAmount,
+        payDay,
+        isRecurring: true,
+    });
+    revalidatePath("/income");
+    revalidatePath("/overview");
 }
 
 export async function updateIncomeSource(id: string, name: string, expectedAmount: string, payDay: number) {
-  await db.update(incomeSources).set({
-    name,
-    expectedAmount,
-    payDay,
-    updatedAt: new Date(),
-  }).where(eq(incomeSources.id, id));
-  revalidatePath("/income");
-  revalidatePath("/overview");
+    await db.update(incomeSources).set({
+        name,
+        expectedAmount,
+        payDay,
+        updatedAt: new Date(),
+    }).where(eq(incomeSources.id, id));
+    revalidatePath("/income");
+    revalidatePath("/overview");
 }
 
 export async function deleteIncomeSource(id: string) {
-  await db.delete(incomeSources).where(eq(incomeSources.id, id));
-  revalidatePath("/income");
-  revalidatePath("/overview");
+    await db.delete(incomeSources).where(eq(incomeSources.id, id));
+    revalidatePath("/income");
+    revalidatePath("/overview");
 }
 
 export async function addExpense(tierId: string, name: string, amount: string) {
@@ -77,6 +77,24 @@ export async function addSavingsGoal(
         priority,
     });
     revalidatePath("/savings");
+}
+
+export async function updateSavingsGoal(
+    id: string,
+    name: string,
+    targetAmount: string,
+    monthlyContribution: string,
+    priority: number
+) {
+    await db.update(savingsGoals).set({
+        name,
+        targetAmount,
+        monthlyContribution,
+        priority,
+        updatedAt: new Date(),
+    }).where(eq(savingsGoals.id, id));
+    revalidatePath("/savings");
+    revalidatePath("/overview");
 }
 
 export async function deleteSavingsGoal(id: string) {
@@ -214,29 +232,29 @@ export async function toggleTransferItem(id: string, completed: boolean) {
 }
 
 export async function addSpendingEntry(
-  snapshotId: string,
-  description: string,
-  amount: string,
-  category: string
+    snapshotId: string,
+    description: string,
+    amount: string,
+    category: string
 ) {
-  await db.insert(spendingEntries).values({
-    snapshotId,
-    description,
-    amount,
-    date: new Date(),
-    category,
-  });
+    await db.insert(spendingEntries).values({
+        snapshotId,
+        description,
+        amount,
+        date: new Date(),
+        category,
+    });
 
-  const entries = await db.select().from(spendingEntries)
-    .where(eq(spendingEntries.snapshotId, snapshotId));
-  
-  const totalSpent = entries.reduce(
-    (sum, e) => sum + parseFloat(e.amount), 0
-  );
+    const entries = await db.select().from(spendingEntries)
+        .where(eq(spendingEntries.snapshotId, snapshotId));
 
-  await db.update(monthlySnapshots).set({
-    freeMoneySpent: String(totalSpent),
-  }).where(eq(monthlySnapshots.id, snapshotId));
+    const totalSpent = entries.reduce(
+        (sum, e) => sum + parseFloat(e.amount), 0
+    );
 
-  revalidatePath("/spending");
+    await db.update(monthlySnapshots).set({
+        freeMoneySpent: String(totalSpent),
+    }).where(eq(monthlySnapshots.id, snapshotId));
+
+    revalidatePath("/spending");
 }
