@@ -1,95 +1,110 @@
 "use client";
 
 import { CascadeResult, formatDKK } from "@/lib/cascade";
-import { useState } from "react";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  type ChartConfig,
+} from "@/components/ui/chart";
+import { Bar, BarChart, XAxis, YAxis } from "recharts";
 
-const SEGMENTS = [
-    { key: "tiers", label: "Udgifter", color: "var(--tier-1)" },
-    { key: "savings", label: "Opsparing", color: "var(--savings-color)" },
-    { key: "investments", label: "Investering", color: "var(--invest-color)" },
-    { key: "free", label: "Frit forbrug", color: "var(--free-color)" },
-];
+const chartConfig = {
+  tiers: { label: "Udgifter", color: "var(--tier-1)" },
+  savings: { label: "Opsparing", color: "var(--savings-color)" },
+  investments: { label: "Investering", color: "var(--invest-color)" },
+  free: { label: "Frit forbrug", color: "var(--free-color)" },
+} satisfies ChartConfig;
 
 export function CascadeBar({ result }: { result: CascadeResult }) {
-    const [hovered, setHovered] = useState<string | null>(null);
+  if (result.totalIncome <= 0) return null;
 
-    if (result.totalIncome <= 0) return null;
+  const tierTotal = result.tierAllocations.reduce(
+    (sum, t) => sum + t.allocated,
+    0
+  );
 
-    const tierTotal = result.tierAllocations.reduce(
-        (sum, t) => sum + t.allocated,
-        0
-    );
+  const segments = [
+    { key: "tiers", value: tierTotal },
+    { key: "savings", value: result.savingsAllocated },
+    { key: "investments", value: result.investmentsAllocated },
+    { key: "free", value: Math.max(0, result.freeMoney) },
+  ].filter((d) => d.value > 0);
 
-    const values: Record<string, number> = {
-        tiers: tierTotal,
-        savings: result.savingsAllocated,
-        investments: result.investmentsAllocated,
-        free: Math.max(0, result.freeMoney),
-    };
+  // Build a single row object with each segment as a key
+  const row: Record<string, number> = {};
+  segments.forEach((s) => {
+    row[s.key] = s.value;
+  });
 
-    return (
-        <div className="py-4">
-            {/* Bar */}
-            <div className="w-full h-8 rounded-lg overflow-hidden flex">
-                {SEGMENTS.map((seg) => {
-                    const pct = (values[seg.key] / result.totalIncome) * 100;
-                    if (pct <= 0) return null;
-                    return (
-                        <div
-                            key={seg.key}
-                            className="h-full transition-opacity duration-200"
-                            style={{
-                                width: `${pct}%`,
-                                backgroundColor: seg.color,
-                                opacity: hovered && hovered !== seg.key ? 0.3 : 1,
-                            }}
-                            onMouseEnter={() => setHovered(seg.key)}
-                            onMouseLeave={() => setHovered(null)}
-                        />
-                    );
-                })}
-            </div>
-
-            {/* Legend */}
-            <div className="flex flex-wrap gap-x-4 gap-y-1 mt-3">
-                {SEGMENTS.map((seg) => {
-                    const value = values[seg.key];
-                    if (value <= 0) return null;
-                    const pct = Math.round((value / result.totalIncome) * 100);
-                    return (
-                        <div
-                            key={seg.key}
-                            className={`flex items-center gap-1.5 text-xs transition-opacity duration-200 ${hovered && hovered !== seg.key
-                                    ? "opacity-30"
-                                    : "opacity-100"
-                                }`}
-                            onMouseEnter={() => setHovered(seg.key)}
-                            onMouseLeave={() => setHovered(null)}
-                        >
-                            <span
-                                className="w-2 h-2 rounded-full"
-                                style={{ backgroundColor: seg.color }}
-                            />
-                            <span className="text-muted-foreground">{seg.label}</span>
-                            <span className="tabular-nums text-foreground">
-                                {pct}%
-                            </span>
-                        </div>
-                    );
-                })}
-            </div>
-
-            {/* Hover detail */}
-            <p className="text-sm text-muted-foreground mt-2 tabular-nums h-5">
-                {hovered && (
-                    <>
-                        {SEGMENTS.find((s) => s.key === hovered)?.label}:{" "}
-                        <span className="text-foreground">
-                            {formatDKK(values[hovered])}
-                        </span>
-                    </>
+  return (
+    <div className="py-4">
+      <ChartContainer config={chartConfig} className="h-14 w-full aspect-auto">
+        <BarChart
+          data={[row]}
+          layout="vertical"
+          margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
+        >
+          <YAxis type="category" hide dataKey={() => ""} />
+          <XAxis type="number" hide domain={[0, result.totalIncome]} />
+          <ChartTooltip
+            content={
+              <ChartTooltipContent
+                hideLabel
+                formatter={(value, name) => (
+                  <div className="flex items-center justify-between w-full gap-4">
+                    <span className="text-muted-foreground">
+                      {chartConfig[name as keyof typeof chartConfig]?.label}
+                    </span>
+                    <span className="tabular-nums font-medium">
+                      {formatDKK(value as number)}
+                    </span>
+                  </div>
                 )}
-            </p>
-        </div>
-    );
+              />
+            }
+          />
+          {segments.map((s, i) => (
+            <Bar
+              key={s.key}
+              dataKey={s.key}
+              stackId="cascade"
+              fill={`var(--color-${s.key})`}
+              radius={
+                i === 0 && segments.length === 1
+                  ? [4, 4, 4, 4]
+                  : i === 0
+                  ? [4, 0, 0, 4]
+                  : i === segments.length - 1
+                  ? [0, 4, 4, 0]
+                  : [0, 0, 0, 0]
+              }
+            />
+          ))}
+        </BarChart>
+      </ChartContainer>
+
+      {/* Legend */}
+      <div className="flex flex-wrap gap-x-4 gap-y-1 mt-3">
+        {segments.map((d) => {
+          const pct = Math.round((d.value / result.totalIncome) * 100);
+          return (
+            <div key={d.key} className="flex items-center gap-1.5 text-xs">
+              <span
+                className="w-2 h-2 rounded-[2px]"
+                style={{
+                  backgroundColor:
+                    chartConfig[d.key as keyof typeof chartConfig]?.color,
+                }}
+              />
+              <span className="text-muted-foreground">
+                {chartConfig[d.key as keyof typeof chartConfig]?.label}
+              </span>
+              <span className="tabular-nums text-foreground">{pct}%</span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
 }

@@ -1,6 +1,13 @@
 "use client";
 
-import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  type ChartConfig,
+} from "@/components/ui/chart";
+import { Pie, PieChart, Cell } from "recharts";
+import { Card, CardContent } from "@/components/ui/card";
 
 type Entry = {
   category: string;
@@ -8,13 +15,13 @@ type Entry = {
 };
 
 const COLORS: Record<string, string> = {
-  "Mad & drikke": "#f87171",
-  "Transport": "#fbbf24",
-  "Underholdning": "#a78bfa",
-  "Tøj": "#60a5fa",
-  "Restaurant": "#f472b6",
-  "Bar": "#fb923c",
-  "Andet": "#6b7280",
+  "Mad & drikke": "var(--tier-1)",
+  Transport: "var(--warning)",
+  Underholdning: "var(--free-color)",
+  Tøj: "var(--invest-color)",
+  Restaurant: "#f472b6",
+  Bar: "#fb923c",
+  Andet: "var(--muted-foreground)",
 };
 
 export function SpendingChart({ entries }: { entries: Entry[] }) {
@@ -29,15 +36,38 @@ export function SpendingChart({ entries }: { entries: Entry[] }) {
     .map(([name, value]) => ({ name, value }))
     .sort((a, b) => b.value - a.value);
 
+  const chartConfig = data.reduce<ChartConfig>((acc, d) => {
+    acc[d.name] = {
+      label: d.name,
+      color: COLORS[d.name] || "var(--muted-foreground)",
+    };
+    return acc;
+  }, {});
+
   return (
-    <div className="mb-6 mt-6">
+    <div className="my-6">
       <h2 className="text-xs text-muted-foreground uppercase tracking-wider mb-3">
         Fordeling
       </h2>
-      <div className="rounded-xl border border-border bg-card p-5">
-        <div className="h-48">
-          <ResponsiveContainer width="100%" height="100%">
+      <Card>
+        <CardContent>
+          <ChartContainer config={chartConfig} className="h-48 w-full aspect-auto">
             <PieChart>
+              <ChartTooltip
+                content={
+                  <ChartTooltipContent
+                    hideLabel
+                    formatter={(value, name) => (
+                      <div className="flex items-center justify-between w-full gap-4">
+                        <span className="text-muted-foreground">{name}</span>
+                        <span className="tabular-nums font-medium">
+                          {Math.round(value as number)} kr.
+                        </span>
+                      </div>
+                    )}
+                  />
+                }
+              />
               <Pie
                 data={data}
                 cx="50%"
@@ -45,33 +75,41 @@ export function SpendingChart({ entries }: { entries: Entry[] }) {
                 innerRadius={50}
                 outerRadius={80}
                 dataKey="value"
+                nameKey="name"
                 stroke="none"
               >
                 {data.map((entry) => (
                   <Cell
                     key={entry.name}
-                    fill={COLORS[entry.name] || "#6b7280"}
+                    fill={COLORS[entry.name] || "var(--muted-foreground)"}
                   />
                 ))}
               </Pie>
             </PieChart>
-          </ResponsiveContainer>
-        </div>
-        <div className="flex flex-wrap gap-x-4 gap-y-1.5 mt-2">
-          {data.map((entry) => (
-            <div key={entry.name} className="flex items-center gap-1.5 text-xs">
-              <span
-                className="w-2 h-2 rounded-full"
-                style={{ backgroundColor: COLORS[entry.name] || "#6b7280" }}
-              />
-              <span className="text-muted-foreground">{entry.name}</span>
-              <span className="tabular-nums text-foreground">
-                {Math.round(entry.value)} kr.
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
+          </ChartContainer>
+
+          <div className="flex flex-wrap gap-x-4 gap-y-1.5 mt-2">
+            {data.map((entry) => (
+              <div
+                key={entry.name}
+                className="flex items-center gap-1.5 text-xs"
+              >
+                <span
+                  className="w-2 h-2 rounded-[2px]"
+                  style={{
+                    backgroundColor:
+                      COLORS[entry.name] || "var(--muted-foreground)",
+                  }}
+                />
+                <span className="text-muted-foreground">{entry.name}</span>
+                <span className="tabular-nums text-foreground">
+                  {Math.round(entry.value)} kr.
+                </span>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
