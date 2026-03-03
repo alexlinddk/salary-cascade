@@ -2,6 +2,8 @@
 
 import { addSavingsGoal } from "@/lib/actions";
 import { useRef } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export default function AddSavingsGoalForm() {
   const formRef = useRef<HTMLFormElement>(null);
@@ -22,44 +24,40 @@ export default function AddSavingsGoalForm() {
         );
         formRef.current?.reset();
       }}
-      className="mt-6 rounded-xl border border-dashed border-border p-5"
+      className="mt-6 rounded-xl border border-dashed p-5"
     >
       <p className="text-sm text-muted-foreground mb-3">Tilføj nyt mål</p>
       <div className="grid grid-cols-2 gap-2">
-        <input
+        <Input
           type="text"
           name="name"
           placeholder="Navn"
-          className="col-span-2 bg-accent border border-border rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-muted-foreground"
+          className="col-span-2"
           required
         />
-        <input
+        <Input
           type="number"
           name="targetAmount"
           placeholder="Målbeløb"
-          className="bg-accent border border-border rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-muted-foreground tabular-nums"
+          className="tabular-nums"
           required
         />
-        <input
+        <Input
           type="number"
           name="monthlyContribution"
           placeholder="Månedligt bidrag"
-          className="bg-accent border border-border rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-muted-foreground tabular-nums"
+          className="tabular-nums"
           required
         />
-        <input
+        <Input
           type="number"
           name="priority"
           placeholder="Prioritet"
-          className="bg-accent border border-border rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-muted-foreground"
           required
         />
-        <button
-          type="submit"
-          className="bg-foreground text-background px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
-        >
+        <Button type="submit" className="w-full">
           Tilføj
-        </button>
+        </Button>
       </div>
     </form>
   );

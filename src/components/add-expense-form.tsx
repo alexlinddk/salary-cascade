@@ -2,6 +2,8 @@
 
 import { addExpense } from "@/lib/actions";
 import { useRef } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export default function AddExpenseForm({ tierId }: { tierId: string }) {
   const formRef = useRef<HTMLFormElement>(null);
@@ -18,26 +20,21 @@ export default function AddExpenseForm({ tierId }: { tierId: string }) {
       className="mt-4"
     >
       <div className="flex gap-2">
-        <input
+        <Input
           type="text"
           name="name"
           placeholder="Udgiftsnavn"
-          className="flex-1 bg-accent border border-border rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-muted-foreground"
+          className="flex-1"
           required
         />
-        <input
+        <Input
           type="number"
           name="amount"
           placeholder="Beløb"
-          className="w-28 bg-accent border border-border rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-muted-foreground tabular-nums"
+          className="w-28 tabular-nums"
           required
         />
-        <button
-          type="submit"
-          className="bg-foreground text-background px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
-        >
-          Tilføj
-        </button>
+        <Button type="submit">Tilføj</Button>
       </div>
     </form>
   );

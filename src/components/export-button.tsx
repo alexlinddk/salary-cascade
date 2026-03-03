@@ -2,6 +2,7 @@
 
 import { exportData } from "@/lib/export";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 export function ExportButton() {
   const [loading, setLoading] = useState(false);
@@ -27,12 +28,8 @@ export function ExportButton() {
   }
 
   return (
-    <button
-      onClick={handleExport}
-      disabled={loading}
-      className="bg-foreground text-background px-5 py-2.5 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
-    >
+    <Button onClick={handleExport} disabled={loading}>
       {loading ? "Eksporterer..." : "Download backup"}
-    </button>
+    </Button>
   );
 }

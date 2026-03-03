@@ -2,12 +2,15 @@ import { TransferItem } from "@/db/schema";
 import { toggleTransferItem } from "@/lib/actions";
 import { getTransferItems } from "@/lib/data";
 import { getCurrentMonth, formatDKK } from "@/lib/cascade";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import Link from "next/link";
 
 function TransferCard({ transfer }: { transfer: TransferItem }) {
   return (
     <div
-      className={`flex items-center justify-between py-3 border-b border-border last:border-b-0 ${
+      className={`flex items-center justify-between py-3 border-b last:border-b-0 ${
         transfer.isCompleted ? "opacity-50" : ""
       }`}
     >
@@ -22,7 +25,7 @@ function TransferCard({ transfer }: { transfer: TransferItem }) {
             type="submit"
             className={`w-5 h-5 rounded border flex items-center justify-center text-xs transition-colors ${
               transfer.isCompleted
-                ? "bg-success border-success text-background"
+                ? "bg-green-500 border-green-500 text-background"
                 : "border-muted-foreground hover:border-foreground"
             }`}
           >
@@ -44,6 +47,31 @@ function TransferCard({ transfer }: { transfer: TransferItem }) {
   );
 }
 
+function TransferSection({
+  title,
+  transfers,
+}: {
+  title: string;
+  transfers: TransferItem[];
+}) {
+  if (transfers.length === 0) return null;
+
+  return (
+    <div className="mb-6">
+      <h2 className="text-xs text-muted-foreground uppercase tracking-wider mb-3">
+        {title}
+      </h2>
+      <Card>
+        <CardContent>
+          {transfers.map((transfer) => (
+            <TransferCard key={transfer.id} transfer={transfer} />
+          ))}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
 export default async function TransfersPage() {
   const month = getCurrentMonth();
   const snapshot = await getTransferItems(month);
@@ -54,7 +82,7 @@ export default async function TransfersPage() {
   const cardTransfers = transfers.filter((t) => t.type === "card");
 
   const completedCount = transfers.filter((t) => t.isCompleted).length;
-  const progress =
+  const progressValue =
     transfers.length > 0 ? (completedCount / transfers.length) * 100 : 0;
 
   if (transfers.length === 0) {
@@ -66,12 +94,9 @@ export default async function TransfersPage() {
         <p className="text-muted-foreground text-sm mb-8">
           Ingen overførsler for denne måned endnu.
         </p>
-        <Link
-          href="/confirm"
-          className="inline-block bg-foreground text-background px-5 py-2.5 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
-        >
-          Bekræft indkomst først →
-        </Link>
+        <Button asChild>
+          <Link href="/confirm">Bekræft indkomst først →</Link>
+        </Button>
       </div>
     );
   }
@@ -90,54 +115,17 @@ export default async function TransfersPage() {
           <span>
             {completedCount} af {transfers.length} gennemført
           </span>
-          <span>{Math.round(progress)}%</span>
+          <span>{Math.round(progressValue)}%</span>
         </div>
-        <div className="w-full h-1.5 bg-accent rounded-full overflow-hidden">
-          <div
-            className="h-full bg-success rounded-full transition-all duration-500"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
+        <Progress
+          value={progressValue}
+          className="*:data-[slot=progress-indicator]:bg-green-500"
+        />
       </div>
 
-      {autoTransfers.length > 0 && (
-        <div className="mb-6">
-          <h2 className="text-xs text-muted-foreground uppercase tracking-wider mb-3">
-            Betalingsservice (automatisk)
-          </h2>
-          <div className="rounded-xl border border-border bg-card px-4">
-            {autoTransfers.map((transfer) => (
-              <TransferCard key={transfer.id} transfer={transfer} />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {manualTransfers.length > 0 && (
-        <div className="mb-6">
-          <h2 className="text-xs text-muted-foreground uppercase tracking-wider mb-3">
-            Manuel overførsel
-          </h2>
-          <div className="rounded-xl border border-border bg-card px-4">
-            {manualTransfers.map((transfer) => (
-              <TransferCard key={transfer.id} transfer={transfer} />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {cardTransfers.length > 0 && (
-        <div className="mb-6">
-          <h2 className="text-xs text-muted-foreground uppercase tracking-wider mb-3">
-            Betalt via kort
-          </h2>
-          <div className="rounded-xl border border-border bg-card px-4">
-            {cardTransfers.map((transfer) => (
-              <TransferCard key={transfer.id} transfer={transfer} />
-            ))}
-          </div>
-        </div>
-      )}
+      <TransferSection title="Betalingsservice (automatisk)" transfers={autoTransfers} />
+      <TransferSection title="Manuel overførsel" transfers={manualTransfers} />
+      <TransferSection title="Betalt via kort" transfers={cardTransfers} />
     </div>
   );
 }

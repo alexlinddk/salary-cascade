@@ -1,4 +1,5 @@
 import { ExportButton } from "../../components/export-button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
 export default function SettingsPage() {
   return (
@@ -10,15 +11,17 @@ export default function SettingsPage() {
         Backup og gendannelse af dine data.
       </p>
 
-      <div className="space-y-4">
-        <div className="rounded-xl border border-border bg-card p-5">
-          <h2 className="font-medium mb-1">Eksporter data</h2>
-          <p className="text-sm text-muted-foreground mb-4">
+      <Card>
+        <CardHeader>
+          <CardTitle>Eksporter data</CardTitle>
+          <CardDescription>
             Download alle dine data som en JSON-fil. Gem den et sikkert sted.
-          </p>
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
           <ExportButton />
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
