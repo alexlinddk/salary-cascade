@@ -262,6 +262,23 @@ export async function addSpendingEntry(
     revalidatePath("/spending");
 }
 
+export async function deleteSpendingEntry(id: string, snapshotId: string) {
+  await db.delete(spendingEntries).where(eq(spendingEntries.id, id));
+
+  const entries = await db.select().from(spendingEntries)
+    .where(eq(spendingEntries.snapshotId, snapshotId));
+
+  const totalSpent = entries.reduce(
+    (sum, e) => sum + parseFloat(e.amount), 0
+  );
+
+  await db.update(monthlySnapshots).set({
+    freeMoneySpent: String(totalSpent),
+  }).where(eq(monthlySnapshots.id, snapshotId));
+
+  revalidatePath("/spending");
+}
+
 export async function deleteTransferItem(id: string) {
   await db.delete(transferItems).where(eq(transferItems.id, id));
   revalidatePath("/transfers");
