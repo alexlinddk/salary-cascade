@@ -16,7 +16,10 @@ export function CascadeBreakdown({ result }: { result: CascadeResult }) {
       {/* Income */}
       {result.totalIncome > 0 && (
         <div className="flex justify-between py-2 text-muted-foreground">
-          <span>Indkomst</span>
+ <span className="flex items-center gap-2">
+          <span className="inline-block w-2 h-2 rounded-full bg-free" />
+          Indkomst
+        </span>
           <span className="tabular-nums font-medium text-foreground">
             {formatDKK(result.totalIncome)}
           </span>
@@ -36,11 +39,10 @@ export function CascadeBreakdown({ result }: { result: CascadeResult }) {
           >
             <span className="flex items-center gap-2 text-muted-foreground">
               <span
-                className={`inline-block w-2 h-2 rounded-full ${
-                  TIER_COLORS[idx] || "bg-muted-foreground"
-                }`}
+                className={`inline-block w-2 h-2 rounded-full ${TIER_COLORS[idx] || "bg-muted-foreground"
+                  }`}
               />
-              {tier.tierEmoji} {tier.tierName}
+              {tier.tierName}
               {!tier.fullyFunded && (
                 <span className="text-xs text-warning">⚠</span>
               )}
@@ -73,7 +75,7 @@ export function CascadeBreakdown({ result }: { result: CascadeResult }) {
         <div className="flex justify-between py-2 text-muted-foreground">
           <span className="flex items-center gap-2">
             <span className="inline-block w-2 h-2 rounded-full bg-savings" />
-            🟢 Opsparing
+            Opsparing
           </span>
           <span className="tabular-nums text-foreground">
             -{formatDKK(result.savingsAllocated)}
@@ -86,7 +88,7 @@ export function CascadeBreakdown({ result }: { result: CascadeResult }) {
         <div className="flex justify-between py-2 text-muted-foreground">
           <span className="flex items-center gap-2">
             <span className="inline-block w-2 h-2 rounded-full bg-invest" />
-            🔵 Investering
+            Investering
           </span>
           <span className="tabular-nums text-foreground">
             -{formatDKK(result.investmentsAllocated)}

@@ -69,9 +69,9 @@
 
   --tier-1: #f87171;
   --tier-2: #fbbf24;
-  --savings-color: #4ade80;
-  --invest-color: #60a5fa;
-  --free-color: #a78bfa;
+  --savings-color: #60a5fa;
+  --invest-color: #a78bfa;
+  --free-color: #4ade80;
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.141 0.005 285.823);

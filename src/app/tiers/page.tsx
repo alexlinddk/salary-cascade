@@ -37,7 +37,6 @@ export default async function TiersPage() {
                         TIER_DOT_COLORS[tier.priority] || "bg-muted-foreground"
                       }`}
                     />
-                    <span className="text-lg">{tier.emoji ?? "📋"}</span>
                     <CardTitle>{tier.name}</CardTitle>
                   </div>
                   <Badge variant="outline">P{tier.priority}</Badge>

@@ -10,7 +10,6 @@ describe("cascade", () => {
                     id: "t1",
                     name: "Faste Udgifter",
                     priority: 1,
-                        emoji: "📋",
                     items: [
                         { id: "e1", name: "Fagforening", amount: 685 },
                         { id: "e2", name: "Studiegæld", amount: 2161 },
@@ -23,7 +22,6 @@ describe("cascade", () => {
                     id: "t2",
                     name: "Variable Udgifter",
                     priority: 2,
-                        emoji: "📋",
                     items: [
                         { id: "e11", name: "Frisør", amount: 229 },
                     ],

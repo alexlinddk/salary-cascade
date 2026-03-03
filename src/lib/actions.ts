@@ -137,7 +137,6 @@ export async function confirmIncome(month: string, actualIncome: string) {
         id: tier.id,
         name: tier.name,
         priority: tier.priority,
-        emoji: tier.emoji ?? "📋",
         items: tier.expenses.map((exp) => ({
             id: exp.id,
             name: exp.name,

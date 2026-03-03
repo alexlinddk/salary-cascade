@@ -2,7 +2,6 @@ export type CascadeTier = {
     id: string;
     name: string;
     priority: number;
-    emoji: string;
     items: { id: string; name: string; amount: number }[];
 };
 
@@ -29,7 +28,6 @@ export type TierAllocation = {
     allocated: number;
     fullyFunded: boolean;
     shortfall: number;
-    tierEmoji: string;
     items: { itemId: string; itemName: string; amount: number }[];
 };
 
@@ -97,7 +95,6 @@ export function cascade(
             allocated,
             fullyFunded: allocated === tierAmount,
             shortfall: tierAmount - allocated,
-            tierEmoji: sortedTiers[i].emoji,
             items: sortedTiers[i].items.map((item) => ({
                 itemId: item.id,
                 itemName: item.name,

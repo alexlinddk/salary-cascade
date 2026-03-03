@@ -85,7 +85,6 @@ export function EditSavingsRow({ goal }: { goal: SavingsGoal }) {
         <div>
             <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
-                    <span className="text-lg">{goal.emoji ?? "🎯"}</span>
                     <h2 className="font-medium">{goal.name}</h2>
                 </div>
                 <div className="flex gap-1">

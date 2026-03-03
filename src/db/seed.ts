@@ -27,14 +27,12 @@ async function seed() {
         name: "Faste Udgifter",
         priority: 1,
         color: "#FF6B6B",
-        emoji: "🏠",
     }).returning();
 
     const [tier2] = await db.insert(tiers).values({
         name: "Variable Udgifter",
         priority: 2,
         color: "#4ECDC4",
-        emoji: "💸",
     }).returning();
 
     await db.insert(expenses).values([{
@@ -155,7 +153,6 @@ async function seed() {
         monthlyContribution: "0",
         deadline: null,
         priority: 1,
-        emoji: "🛟"
         }, {
         name: "Rejse til Japan",
         targetAmount: "30000.00",
@@ -163,7 +160,6 @@ async function seed() {
         monthlyContribution: "1000.00",
         deadline: "2025-04-20",
         priority: 2,
-        emoji: "✈️"
     }]);
 
     await db.insert(investmentAllocations).values({

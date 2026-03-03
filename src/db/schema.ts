@@ -33,7 +33,6 @@ export const tiers = pgTable("tiers", {
     name: text("name").notNull(),
     priority: integer("priority").notNull(),
     color: text("color").notNull(),
-    emoji: text("emoji").default("📋"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -77,7 +76,6 @@ export const savingsGoals = pgTable("savings_goals", {
     monthlyContribution: numeric("monthly_contribution", { precision: 10, scale: 2 }).notNull().default("0" ),
     deadline: text("deadline"),
     priority: integer("priority").notNull(),
-    emoji: text("emoji").default("🎯"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
