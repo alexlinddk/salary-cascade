@@ -3,6 +3,7 @@
 import { exportData } from "@/lib/export";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Download } from "lucide-react";
 
 export function ExportButton() {
   const [loading, setLoading] = useState(false);
@@ -28,7 +29,8 @@ export function ExportButton() {
   }
 
   return (
-    <Button onClick={handleExport} disabled={loading}>
+    <Button onClick={handleExport} disabled={loading} className="gap-1.5">
+      <Download size={14} />
       {loading ? "Eksporterer..." : "Download backup"}
     </Button>
   );

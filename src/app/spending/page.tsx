@@ -7,6 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { deleteSpendingEntry } from "@/lib/actions";
+import { X } from "lucide-react";
 
 export default async function SpendingPage() {
   const snapshot = await getCurrentSnapshot();
@@ -53,7 +54,7 @@ export default async function SpendingPage() {
       ? "[&>[data-slot=progress-indicator]]:bg-red-500"
       : remaining < freeMoney * 0.2
         ? "[&>[data-slot=progress-indicator]]:bg-yellow-500"
-        : "[&>[data-slot=progress-indicator]]:bg-violet-400";
+        : "[&>[data-slot=progress-indicator]]:bg-green-400";
 
   return (
     <div>
@@ -70,7 +71,7 @@ export default async function SpendingPage() {
 
           <div className="flex justify-between items-baseline">
             <span
-              className={`text-3xl font-light tabular-nums ${remaining < 0 ? "text-red-500" : "text-violet-400"
+              className={`text-3xl font-light tabular-nums ${remaining < 0 ? "text-red-500" : "text-green-400"
                 }`}
             >
               {formatDKK(remaining)}
@@ -136,7 +137,7 @@ export default async function SpendingPage() {
                           size="icon-xs"
                           className="text-muted-foreground hover:text-destructive"
                         >
-                          ✕
+                          <X size={14} />
                         </Button>
                       </form>
                     </div>

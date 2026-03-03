@@ -4,6 +4,7 @@ import { addSavingsGoal } from "@/lib/actions";
 import { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Plus } from "lucide-react";
 
 export default function AddSavingsGoalForm() {
   const formRef = useRef<HTMLFormElement>(null);
@@ -62,7 +63,8 @@ export default function AddSavingsGoalForm() {
           placeholder="Prioritet"
           required
         />
-        <Button type="submit" className="col-span-2">
+        <Button type="submit" className="col-span-2 gap-1.5">
+          <Plus size={14} />
           Tilføj
         </Button>
       </div>

@@ -5,6 +5,7 @@ import { formatDKK } from "@/lib/cascade";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { X } from "lucide-react";
 
 export default async function InvestmentsPage() {
   const investmentAllocations = await getInvestmentAllocations();
@@ -62,7 +63,7 @@ export default async function InvestmentsPage() {
                     size="icon-xs"
                     className="text-muted-foreground hover:text-destructive"
                   >
-                    ✕
+                    <X size={14} />
                   </Button>
                 </form>
               </CardContent>

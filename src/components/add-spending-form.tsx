@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { useState } from "react";
+import { Plus } from "lucide-react";
 
 const CATEGORIES = [
   "Mad & drikke",
@@ -77,7 +78,10 @@ export default function AddSpendingForm({
                 ))}
               </SelectContent>
             </Select>
-            <Button type="submit">Tilføj</Button>
+            <Button type="submit" className="gap-1.5">
+              <Plus size={14} />
+              Tilføj
+            </Button>
           </div>
         </form>
       </CardContent>

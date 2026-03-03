@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 
 import Link from "next/link";
+import { X } from "lucide-react";
 
 function TransferCard({ transfer }: { transfer: TransferItem }) {
   return (
@@ -24,8 +25,8 @@ function TransferCard({ transfer }: { transfer: TransferItem }) {
           <button
             type="submit"
             className={`w-5 h-5 rounded border flex items-center justify-center text-xs transition-colors ${transfer.isCompleted
-                ? "bg-green-500 border-green-500 text-background"
-                : "border-muted-foreground hover:border-foreground"
+              ? "bg-green-500 border-green-500 text-background"
+              : "border-muted-foreground hover:border-foreground"
               }`}
           >
             {transfer.isCompleted && "✓"}
@@ -54,7 +55,7 @@ function TransferCard({ transfer }: { transfer: TransferItem }) {
             size="icon-xs"
             className="text-muted-foreground hover:text-destructive"
           >
-            ✕
+            <X size={14} />
           </Button>
         </form>
       </div>

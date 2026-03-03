@@ -31,8 +31,8 @@ export default function SetupPage() {
                     const Icon = link.icon;
                     return (
                         <Link key={link.href} href={link.href}>
-                            <Card className="hover:bg-accent/50 transition-colors">
-                                <CardContent className="flex items-center gap-4 py-4">
+                            <Card className="hover:bg-accent/50 transition-colors mb-2">
+                                <CardContent className="flex items-center space-x-4">
                                     <Icon size={20} className="text-muted-foreground" />
                                     <div>
                                         <p className="font-medium text-sm">{link.label}</p>

@@ -4,6 +4,7 @@ import { addInvestmentAllocation } from "@/lib/actions";
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Plus } from "lucide-react";
 
 export default function AddInvestmentAllocationForm() {
   const formRef = useRef<HTMLFormElement>(null);
@@ -37,9 +38,7 @@ export default function AddInvestmentAllocationForm() {
           <Input
             type="number"
             name="amount"
-            placeholder={
-              allocationType === "fixed" ? "Beløb i DKK" : "Procent"
-            }
+            placeholder={allocationType === "fixed" ? "Beløb (kr)" : "Procent (%)"}
             className="flex-1 tabular-nums"
             required
           />
@@ -51,7 +50,7 @@ export default function AddInvestmentAllocationForm() {
               className="rounded-none"
               onClick={() => setAllocationType("fixed")}
             >
-              Fast
+              kr
             </Button>
             <Button
               type="button"
@@ -64,7 +63,8 @@ export default function AddInvestmentAllocationForm() {
             </Button>
           </div>
         </div>
-        <Button type="submit" className="w-full">
+        <Button type="submit" className="w-full gap-1.5">
+          <Plus size={14} />
           Tilføj
         </Button>
       </div>

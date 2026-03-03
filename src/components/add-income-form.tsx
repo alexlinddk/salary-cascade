@@ -11,6 +11,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { Plus } from "lucide-react";
 
 export function AddIncomeForm() {
     const formRef = useRef<HTMLFormElement>(null);
@@ -68,7 +69,10 @@ export function AddIncomeForm() {
                         </Button>
                     </div>
                 </div>
-                <Button type="submit" className="w-full">Tilføj</Button>
+                <Button type="submit" className="w-full gap-1.5">
+                    <Plus size={14} />
+                    Tilføj
+                </Button>
             </div>
         </form>
     );

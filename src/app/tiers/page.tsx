@@ -5,6 +5,7 @@ import AddExpenseForm from "../../components/add-expense-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { X } from "lucide-react";
 
 const TIER_DOT_COLORS: Record<number, string> = {
   1: "bg-tier1",
@@ -33,9 +34,8 @@ export default async function TiersPage() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span
-                      className={`w-2.5 h-2.5 rounded-full ${
-                        TIER_DOT_COLORS[tier.priority] || "bg-muted-foreground"
-                      }`}
+                      className={`w-2.5 h-2.5 rounded-full ${TIER_DOT_COLORS[tier.priority] || "bg-muted-foreground"
+                        }`}
                     />
                     <CardTitle>{tier.name}</CardTitle>
                   </div>
@@ -75,7 +75,7 @@ export default async function TiersPage() {
                               size="icon-xs"
                               className="text-muted-foreground hover:text-destructive"
                             >
-                              ✕
+                              <X size={14} />
                             </Button>
                           </form>
                         </div>

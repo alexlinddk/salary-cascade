@@ -4,6 +4,7 @@ import { addExpense } from "@/lib/actions";
 import { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Plus } from "lucide-react";
 
 export default function AddExpenseForm({ tierId }: { tierId: string }) {
   const formRef = useRef<HTMLFormElement>(null);
@@ -34,8 +35,10 @@ export default function AddExpenseForm({ tierId }: { tierId: string }) {
           className="w-28 tabular-nums"
           required
         />
-        <Button type="submit">Tilføj</Button>
-      </div>
+        <Button type="submit" className="gap-1.5">
+          <Plus size={14} />
+          Tilføj
+        </Button>      </div>
     </form>
   );
 }

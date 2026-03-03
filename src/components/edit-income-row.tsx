@@ -14,6 +14,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import type { IncomeSource } from "@/db/schema";
+import { Check } from "lucide-react";
 
 export function EditIncomeRow({ source }: { source: IncomeSource }) {
     const [editing, setEditing] = useState(false);
@@ -67,7 +68,10 @@ export function EditIncomeRow({ source }: { source: IncomeSource }) {
                     </div>
                 </div>
                 <div className="flex gap-2">
-                    <Button type="submit" size="sm">Gem</Button>
+                    <Button type="submit" size="sm" className="gap-1.5">
+                        <Check size={14} />
+                        Gem
+                    </Button>
                     <Button
                         type="button"
                         variant="ghost"

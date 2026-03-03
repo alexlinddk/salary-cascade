@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import type { SavingsGoal } from "@/db/schema";
+import { Check, Pencil, X } from "lucide-react";
 
 export function EditSavingsRow({ goal }: { goal: SavingsGoal }) {
     const [editing, setEditing] = useState(false);
@@ -67,7 +68,10 @@ export function EditSavingsRow({ goal }: { goal: SavingsGoal }) {
                     required
                 />
                 <div className="flex gap-2">
-                    <Button type="submit" size="sm">Gem</Button>
+                    <Button type="submit" size="sm" className="gap-1.5">
+                        <Check size={14} />
+                        Gem
+                    </Button>
                     <Button
                         type="button"
                         variant="ghost"
@@ -88,12 +92,8 @@ export function EditSavingsRow({ goal }: { goal: SavingsGoal }) {
                     <h2 className="font-medium">{goal.name}</h2>
                 </div>
                 <div className="flex gap-1">
-                    <Button
-                        variant="ghost"
-                        size="icon-xs"
-                        onClick={() => setEditing(true)}
-                    >
-                        ✎
+                    <Button variant="ghost" size="icon-xs" onClick={() => setEditing(true)}>
+                        <Pencil size={14} />
                     </Button>
                     <form
                         action={async () => {
@@ -106,7 +106,7 @@ export function EditSavingsRow({ goal }: { goal: SavingsGoal }) {
                             size="icon-xs"
                             className="text-muted-foreground hover:text-destructive"
                         >
-                            ✕
+                            <X size={14} />
                         </Button>
                     </form>
                 </div>
