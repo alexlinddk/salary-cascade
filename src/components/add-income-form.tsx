@@ -1,12 +1,20 @@
 "use client";
 
 import { addIncomeSource } from "@/lib/actions";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 
 export function AddIncomeForm() {
     const formRef = useRef<HTMLFormElement>(null);
+    const [payDay, setPayDay] = useState("-1");
 
     return (
         <form
@@ -14,9 +22,9 @@ export function AddIncomeForm() {
             action={async (data: FormData) => {
                 const name = data.get("name") as string;
                 const amount = data.get("amount") as string;
-                const payDay = parseInt(data.get("payDay") as string);
-                await addIncomeSource(name, amount, payDay);
+                await addIncomeSource(name, amount, parseInt(payDay));
                 formRef.current?.reset();
+                setPayDay("-1");
             }}
             className="mt-6 rounded-xl border border-dashed p-5"
         >
@@ -39,15 +47,26 @@ export function AddIncomeForm() {
                         className="flex-1 tabular-nums"
                         required
                     />
-                    <Input
-                        type="number"
-                        name="payDay"
-                        placeholder="Løndag"
-                        min={1}
-                        max={31}
-                        className="w-20"
-                        required
-                    />
+                    <div className="flex rounded-lg border overflow-hidden">
+                        <Button
+                            type="button"
+                            variant={payDay === "-1" ? "default" : "ghost"}
+                            size="sm"
+                            className="rounded-none"
+                            onClick={() => setPayDay("-1")}
+                        >
+                            Sidste bankdag
+                        </Button>
+                        <Button
+                            type="button"
+                            variant={payDay === "1" ? "default" : "ghost"}
+                            size="sm"
+                            className="rounded-none"
+                            onClick={() => setPayDay("1")}
+                        >
+                            Første bankdag
+                        </Button>
+                    </div>
                 </div>
                 <Button type="submit" className="w-full">Tilføj</Button>
             </div>

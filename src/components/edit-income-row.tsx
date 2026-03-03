@@ -6,10 +6,18 @@ import { formatDKK } from "@/lib/cascade";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 import type { IncomeSource } from "@/db/schema";
 
 export function EditIncomeRow({ source }: { source: IncomeSource }) {
     const [editing, setEditing] = useState(false);
+    const [payDay, setPayDay] = useState(String(source.payDay));
 
     if (editing) {
         return (
@@ -17,8 +25,7 @@ export function EditIncomeRow({ source }: { source: IncomeSource }) {
                 action={async (data: FormData) => {
                     const name = data.get("name") as string;
                     const amount = data.get("amount") as string;
-                    const payDay = parseInt(data.get("payDay") as string);
-                    await updateIncomeSource(source.id, name, amount, payDay);
+                    await updateIncomeSource(source.id, name, amount, parseInt(payDay));
                     setEditing(false);
                 }}
                 className="space-y-3"
@@ -38,15 +45,26 @@ export function EditIncomeRow({ source }: { source: IncomeSource }) {
                         className="flex-1 tabular-nums"
                         required
                     />
-                    <Input
-                        type="number"
-                        name="payDay"
-                        defaultValue={source.payDay}
-                        min={1}
-                        max={31}
-                        className="w-20"
-                        required
-                    />
+                    <div className="flex rounded-lg border overflow-hidden">
+                        <Button
+                            type="button"
+                            variant={payDay === "-1" ? "default" : "ghost"}
+                            size="sm"
+                            className="rounded-none"
+                            onClick={() => setPayDay("-1")}
+                        >
+                            Sidste bankdag
+                        </Button>
+                        <Button
+                            type="button"
+                            variant={payDay === "1" ? "default" : "ghost"}
+                            size="sm"
+                            className="rounded-none"
+                            onClick={() => setPayDay("1")}
+                        >
+                            Første bankdag
+                        </Button>
+                    </div>
                 </div>
                 <div className="flex gap-2">
                     <Button type="submit" size="sm">Gem</Button>
@@ -54,7 +72,10 @@ export function EditIncomeRow({ source }: { source: IncomeSource }) {
                         type="button"
                         variant="ghost"
                         size="sm"
-                        onClick={() => setEditing(false)}
+                        onClick={() => {
+                            setPayDay(String(source.payDay));
+                            setEditing(false);
+                        }}
                     >
                         Annuller
                     </Button>
@@ -78,7 +99,12 @@ export function EditIncomeRow({ source }: { source: IncomeSource }) {
                     <span className="tabular-nums">
                         {formatDKK(parseFloat(source.expectedAmount))}
                     </span>
-                    <span>d. {source.payDay} hver måned</span>
+                    <span>
+                        {source.payDay === -1
+                            ? "Sidste bankdag"
+                            : `d. ${source.payDay}`}{" "}
+                        hver måned
+                    </span>
                 </div>
             </div>
             <div className="flex gap-1">
