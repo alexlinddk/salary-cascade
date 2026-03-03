@@ -66,17 +66,21 @@ export async function deleteExpense(id: string) {
 }
 
 export async function addSavingsGoal(
-    name: string,
-    targetAmount: string,
-    monthlyContribution: string,
-    priority: number) {
-    await db.insert(savingsGoals).values({
-        name,
-        targetAmount: targetAmount,
-        monthlyContribution: monthlyContribution,
-        priority,
-    });
-    revalidatePath("/savings");
+  name: string,
+  targetAmount: string,
+  currentAmount: string,
+  monthlyContribution: string,
+  priority: number
+) {
+  await db.insert(savingsGoals).values({
+    name,
+    targetAmount,
+    currentAmount,
+    monthlyContribution,
+    priority,
+  });
+  revalidatePath("/savings");
+  revalidatePath("/overview");
 }
 
 export async function updateSavingsGoal(

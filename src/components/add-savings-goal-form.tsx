@@ -14,11 +14,12 @@ export default function AddSavingsGoalForm() {
       action={async (data: FormData) => {
         const name = data.get("name") as string;
         const targetAmount = data.get("targetAmount") as string;
-        const monthlyContribution = data.get("monthlyContribution") as string;
+        const currentAmount = (data.get("currentAmount") as string) || "0"; const monthlyContribution = data.get("monthlyContribution") as string;
         const priority = data.get("priority") as string;
         await addSavingsGoal(
           name,
           targetAmount,
+          currentAmount,
           monthlyContribution,
           parseFloat(priority)
         );
@@ -44,6 +45,12 @@ export default function AddSavingsGoalForm() {
         />
         <Input
           type="number"
+          name="currentAmount"
+          placeholder="Allerede sparet"
+          className="tabular-nums"
+        />
+        <Input
+          type="number"
           name="monthlyContribution"
           placeholder="Månedligt bidrag"
           className="tabular-nums"
@@ -55,7 +62,7 @@ export default function AddSavingsGoalForm() {
           placeholder="Prioritet"
           required
         />
-        <Button type="submit" className="w-full">
+        <Button type="submit" className="col-span-2">
           Tilføj
         </Button>
       </div>
