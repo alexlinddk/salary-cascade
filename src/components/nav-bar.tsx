@@ -2,24 +2,35 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import {
+  LayoutDashboard,
+  Wallet,
+  ArrowLeftRight,
+  Settings,
+  CircleCheck,
+  TrendingUp,
+  Layers,
+  Target,
+  LineChart,
+} from "lucide-react";
 
 const mainLinks = [
-  { href: "/overview", label: "Oversigt", icon: "◉" },
-  { href: "/spending", label: "Forbrug", icon: "○" },
-  { href: "/transfers", label: "Overførsler", icon: "⇄" },
-  { href: "/setup", label: "Opsætning", icon: "⚙" },
+  { href: "/overview", label: "Oversigt", icon: LayoutDashboard },
+  { href: "/spending", label: "Forbrug", icon: Wallet },
+  { href: "/transfers", label: "Overførsler", icon: ArrowLeftRight },
+  { href: "/setup", label: "Opsætning", icon: Settings },
 ];
 
 const allLinks = [
-  { href: "/overview", label: "Oversigt", icon: "◉" },
-  { href: "/spending", label: "Forbrug", icon: "○" },
-  { href: "/transfers", label: "Overførsler", icon: "⇄" },
-  { href: "/confirm", label: "Bekræft", icon: "▸" },
-  { href: "/income", label: "Indkomst", icon: "↓" },
-  { href: "/tiers", label: "Udgifter", icon: "◫" },
-  { href: "/savings", label: "Opsparing", icon: "◎" },
-  { href: "/investments", label: "Investering", icon: "◆" },
-  { href: "/settings", label: "Indstillinger", icon: "⚙" },
+  { href: "/overview", label: "Oversigt", icon: LayoutDashboard },
+  { href: "/spending", label: "Forbrug", icon: Wallet },
+  { href: "/transfers", label: "Overførsler", icon: ArrowLeftRight },
+  { href: "/confirm", label: "Bekræft", icon: CircleCheck },
+  { href: "/income", label: "Indkomst", icon: TrendingUp },
+  { href: "/tiers", label: "Udgifter", icon: Layers },
+  { href: "/savings", label: "Opsparing", icon: Target },
+  { href: "/investments", label: "Investering", icon: LineChart },
+  { href: "/settings", label: "Indstillinger", icon: Settings },
 ];
 
 export function NavBar() {
@@ -36,6 +47,7 @@ export function NavBar() {
           {allLinks.map((link) => {
             const isActive =
               pathname === link.href || pathname.startsWith(link.href + "/");
+            const Icon = link.icon;
             return (
               <Link
                 key={link.href}
@@ -46,7 +58,7 @@ export function NavBar() {
                     : "text-muted-foreground hover:text-foreground hover:bg-accent"
                 }`}
               >
-                <span className="text-xs w-4 text-center">{link.icon}</span>
+                <Icon size={16} />
                 {link.label}
               </Link>
             );
@@ -60,6 +72,7 @@ export function NavBar() {
           {mainLinks.map((link) => {
             const isActive =
               pathname === link.href || pathname.startsWith(link.href + "/");
+            const Icon = link.icon;
             return (
               <Link
                 key={link.href}
@@ -70,7 +83,7 @@ export function NavBar() {
                     : "text-muted-foreground"
                 }`}
               >
-                <span className="text-base">{link.icon}</span>
+                <Icon size={20} />
                 {link.label}
               </Link>
             );
