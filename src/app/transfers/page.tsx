@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import TransferCard from "@/components/transfer-card";
+import RegenerateButton from "@/components/regenerate-button";
 import Link from "next/link";
 import type { TransferItem } from "@/db/schema";
 
@@ -63,9 +64,12 @@ export default async function TransfersPage() {
 
   return (
     <div>
-      <h1 className="text-3xl font-semibold tracking-tight mb-1">
-        Overførsler
-      </h1>
+      <div className="flex items-center justify-between mb-1">
+        <h1 className="text-3xl font-semibold tracking-tight">
+          Overførsler
+        </h1>
+        <RegenerateButton />
+      </div>
       <p className="text-muted-foreground text-sm mb-4">
         Marker overførsler som betalt efterhånden som du gennemfører dem.
       </p>

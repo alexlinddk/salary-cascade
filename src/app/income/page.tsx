@@ -1,9 +1,6 @@
-import { deleteIncomeSource } from "@/lib/actions";
 import { formatDKK } from "@/lib/cascade";
 import { getIncomeSources } from "@/lib/data";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { AddIncomeForm } from "../../components/add-income-form";
 import { EditIncomeRow } from "../../components/edit-income-row";
 
