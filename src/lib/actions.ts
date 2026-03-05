@@ -51,10 +51,22 @@ export async function addExpense(tierId: string, name: string, amount: string) {
     revalidatePath("/tiers");
 }
 
-export async function updateExpense(id: string, name: string, amount: string) {
+export async function updateExpense(
+    id: string,
+    data: {
+        name: string;
+        amount: string;
+        category: string;
+        dueDate: number | null;
+        isAutoPaid: boolean;
+    }
+) {
     await db.update(expenses).set({
-        name,
-        amount,
+        name: data.name,
+        amount: data.amount,
+        category: data.category,
+        dueDate: data.dueDate,
+        isAutoPaid: data.isAutoPaid,
         updatedAt: new Date(),
     }).where(eq(expenses.id, id));
     revalidatePath("/tiers");
@@ -66,21 +78,21 @@ export async function deleteExpense(id: string) {
 }
 
 export async function addSavingsGoal(
-  name: string,
-  targetAmount: string,
-  currentAmount: string,
-  monthlyContribution: string,
-  priority: number
+    name: string,
+    targetAmount: string,
+    currentAmount: string,
+    monthlyContribution: string,
+    priority: number
 ) {
-  await db.insert(savingsGoals).values({
-    name,
-    targetAmount,
-    currentAmount,
-    monthlyContribution,
-    priority,
-  });
-  revalidatePath("/savings");
-  revalidatePath("/overview");
+    await db.insert(savingsGoals).values({
+        name,
+        targetAmount,
+        currentAmount,
+        monthlyContribution,
+        priority,
+    });
+    revalidatePath("/savings");
+    revalidatePath("/overview");
 }
 
 export async function updateSavingsGoal(
@@ -263,23 +275,30 @@ export async function addSpendingEntry(
 }
 
 export async function deleteSpendingEntry(id: string, snapshotId: string) {
-  await db.delete(spendingEntries).where(eq(spendingEntries.id, id));
+    await db.delete(spendingEntries).where(eq(spendingEntries.id, id));
 
-  const entries = await db.select().from(spendingEntries)
-    .where(eq(spendingEntries.snapshotId, snapshotId));
+    const entries = await db.select().from(spendingEntries)
+        .where(eq(spendingEntries.snapshotId, snapshotId));
 
-  const totalSpent = entries.reduce(
-    (sum, e) => sum + parseFloat(e.amount), 0
-  );
+    const totalSpent = entries.reduce(
+        (sum, e) => sum + parseFloat(e.amount), 0
+    );
 
-  await db.update(monthlySnapshots).set({
-    freeMoneySpent: String(totalSpent),
-  }).where(eq(monthlySnapshots.id, snapshotId));
+    await db.update(monthlySnapshots).set({
+        freeMoneySpent: String(totalSpent),
+    }).where(eq(monthlySnapshots.id, snapshotId));
 
-  revalidatePath("/spending");
+    revalidatePath("/spending");
+}
+
+export async function updateTransferItem(id: string, amount: string) {
+    await db.update(transferItems).set({
+        amount,
+    }).where(eq(transferItems.id, id));
+    revalidatePath("/transfers");
 }
 
 export async function deleteTransferItem(id: string) {
-  await db.delete(transferItems).where(eq(transferItems.id, id));
-  revalidatePath("/transfers");
+    await db.delete(transferItems).where(eq(transferItems.id, id));
+    revalidatePath("/transfers");
 }

@@ -1,11 +1,9 @@
-import { deleteExpense } from "@/lib/actions";
 import { formatDKK } from "@/lib/cascade";
 import { getTiersWithExpenses } from "@/lib/data";
 import AddExpenseForm from "../../components/add-expense-form";
+import ExpenseRow from "../../components/expense-row";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
 
 const TIER_DOT_COLORS: Record<number, string> = {
   1: "bg-tier1",
@@ -19,7 +17,8 @@ export default async function TiersPage() {
     <div>
       <h1 className="text-3xl font-semibold tracking-tight mb-1">Udgifter</h1>
       <p className="text-muted-foreground text-sm mb-8">
-        Administrer dine tiers og tilhørende udgifter.
+        Administrer dine tiers og tilhørende udgifter. Klik på en udgift for at
+        redigere.
       </p>
 
       <div className="space-y-6">
@@ -34,8 +33,9 @@ export default async function TiersPage() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span
-                      className={`w-2.5 h-2.5 rounded-full ${TIER_DOT_COLORS[tier.priority] || "bg-muted-foreground"
-                        }`}
+                      className={`w-2.5 h-2.5 rounded-full ${
+                        TIER_DOT_COLORS[tier.priority] || "bg-muted-foreground"
+                      }`}
                     />
                     <CardTitle>{tier.name}</CardTitle>
                   </div>
@@ -47,39 +47,7 @@ export default async function TiersPage() {
                 {tier.expenses.length > 0 ? (
                   <div>
                     {tier.expenses.map((expense) => (
-                      <div
-                        key={expense.id}
-                        className="flex items-center justify-between py-2 border-b last:border-b-0"
-                      >
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm">{expense.name}</span>
-                          {expense.isAutoPaid && (
-                            <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
-                              AUTO
-                            </Badge>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <span className="tabular-nums text-sm">
-                            {formatDKK(parseFloat(expense.amount))}
-                          </span>
-                          <form
-                            action={async () => {
-                              "use server";
-                              await deleteExpense(expense.id);
-                            }}
-                          >
-                            <Button
-                              type="submit"
-                              variant="ghost"
-                              size="icon-xs"
-                              className="text-muted-foreground hover:text-destructive"
-                            >
-                              <X size={14} />
-                            </Button>
-                          </form>
-                        </div>
-                      </div>
+                      <ExpenseRow key={expense.id} expense={expense} />
                     ))}
                   </div>
                 ) : (
