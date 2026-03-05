@@ -9,6 +9,7 @@ const connectionString = process.env.DATABASE_URL!;
 
 const queryClient = postgres(connectionString, {
     prepare: false,
+    max: 1,
 });
 
 export const db = drizzle(queryClient, { schema });
